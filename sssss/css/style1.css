@@ -1,0 +1,155 @@
+/* Styles pour l'en-tête */
+.header {
+  background-color: #3a7ca5; /* Deep sky blue */
+  padding: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.header img {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+  object-fit: contain;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 22px;
+  color: #ffffff; /* White */
+}
+
+/* Styles pour le menu */
+.menu {
+  background-color: #2f4858; /* Dark blue-gray */
+  width: 225px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow-y: auto;
+  font-size: large;
+}
+
+.menu ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu ul li {
+  padding: 10px;
+}
+
+.menu ul li a {
+  text-decoration: none;
+  color: #f2f6f0; /* Light gray */
+  display: block;
+  transition: 0.3s;
+}
+
+.menu ul li a:hover {
+  background-color: #3a7ca5; /* Deep sky blue */
+}
+
+.menu ul li.active a {
+  background-color: #3a7ca5; /* Deep sky blue */
+  font-weight: bold;
+}
+
+.menu .submenu {
+  display: none;
+  margin-left: 10px;
+}
+
+.menu .submenu li {
+  padding: 5px;
+}
+
+.menu ul li:hover .submenu {
+  display: block;
+}
+
+/* Styles pour le contenu */
+.content {
+  margin-left: 225px;
+  padding: 20px;
+}
+
+/* Styles pour la table */
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th,
+td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #2f4858; /* Dark blue-gray */
+  color: #ffffff; /* White */
+}
+
+tr:hover {
+  background-color: #f0f0f0; /* Light gray */
+}
+
+/* Styles pour le formulaire de recherche */
+.rech {
+  margin-bottom: 20px;
+}
+
+.rech label {
+  font-weight: bold;
+}
+.rech select {
+  font-weight: bold;
+}
+
+.rech option {
+  font-weight: bold;
+}
+
+.rech input[type="text"] {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.rech input[type="email"] {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.rech input[type="password"] {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.rech input[type="file"] {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.rech input[type="date"] {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.rech input[type="submit"] {
+  padding: 8px 16px;
+  background-color: #3a7ca5; /* Deep sky blue */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.rech input[type="submit"]:hover {
+  background-color: #2f4858; /* Dark blue-gray */
+}

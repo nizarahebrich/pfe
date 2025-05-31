@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Login Form</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:600&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a81368914c.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        /* Ajoutez des styles spécifiques ici si nécessaire */
+        .error-message {
+            color: red;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+
+<body>
+    <img class="wave" src="img/wave (2).png" alt="Background Wave Image">
+    <div class="container">
+        <div class="img">
+            <img src="img/bts4.png" alt="Background Image">
+        </div>
+        <div class="login-content">
+            <form action="login.php" method="POST">
+                <img src="img/bts2.png" alt="Avatar">
+                <h2 class="title">BTS Cours</h2>
+                <h3 class="title">Welcome</h3>
+
+                <?php if (isset($message)): ?>
+                <p class="error-message"><?php echo htmlspecialchars($message, ENT_QUOTES, 'UTF-8'); ?></p>
+                <?php endif; ?>
+
+                <div class="div">
+                    <h5 class="title">Role</h5>
+                    <label>
+                        <input type="radio" class="input" name="role" value="utilisateur" checked>
+                        Utilisateur
+                    </label>
+                    <label>
+                        <input type="radio" class="input" name="role" value="administrateur">
+                        Administrateur
+                    </label>
+                </div>
+                <div class="input-div one">
+                    <div class="i">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="div">
+                        <h5>Username</h5>
+                        <input type="text" class="input" name="email" required>
+                    </div>
+                </div>
+                <div class="input-div pass">
+                    <div class="i">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <div class="div">
+                        <h5>Password</h5>
+                        <input type="password" class="input" name="password" required>
+                    </div>
+                </div>
+
+                <input type="submit" class="btn" value="Login">
+            </form>
+        </div>
+    </div>
+    <script src="js/main.js" defer></script>
+</body>
+
+</html>

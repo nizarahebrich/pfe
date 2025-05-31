@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Suppression d'une Personne</title>
+    <link rel="stylesheet" type="text/css" href="css/style1.css">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.2/css/bootstrap.min.css">
+    <script src="https://kit.fontawesome.com/a81368914c.js"></script>
+    <script>
+        // JavaScript pour rendre le menu dynamique
+        window.addEventListener('DOMContentLoaded', (event) => {
+            const menuItems = document.querySelectorAll('.menu ul li');
+            menuItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    menuItems.forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+                });
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div class="menu">
+        <ul>
+            <li class="active">
+                <div class="header">
+                    <img src="img/logo.png" alt="Logo">
+                    <h1>FaceDetect</h1>
+                </div>
+                <a href="page_reussie.php">Accueil</a>
+                <ul class="submenu">
+                    <li><a href="today.php">Aujourd'hui</a></li>
+                    <li><a href="heir.php">Hier</a></li>
+                    <li><a href="affichage_detections.php">Rechercher une date</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#">Profil</a>
+                <ul class="submenu">
+                    <li><a href="modif_password.html">Changer le mot de passe</a></li>
+                    <li><a href="#">Sous-menu 1</a></li>
+                    <li><a href="#">Sous-menu 2</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#">Paramètres</a>
+                <ul class="submenu">
+                    <li><a href="add_person.html">Ajouter une personne</a></li>
+                    <li><a href="delet_person.html">Supprimer une personne</a></li>
+                    <li><a href="personne.php">Liste des personnes</a></li>
+                    <li><a href="add_user.html">Ajouter un utilisateur</a></li>
+                    <li><a href="delet_user.html">Supprimer un utilisateur</a></li>
+                    <li><a href="modi_user.php">Modifier un utilisateur</a></li>
+                </ul>
+            </li>
+            <li><a href="index.html">Déconnexion</a></li>
+        </ul>
+    </div>
+    <div class="content">
+        <h1>Suppression d'une Personne</h1>
+        <form action="supprimer_personne.php" method="post" class="rech">
+            <label for="nom">Nom de la personne :</label>
+            <input type="text" name="nom" id="nom" required>
+            <input type="submit" value="Supprimer">
+        </form>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

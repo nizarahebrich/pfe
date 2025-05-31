@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Home Page</title>
+     <link rel="stylesheet" type="text/css" href="css/style1.css">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.2/css/bootstrap.min.css">
+    <script src="https://kit.fontawesome.com/a81368914c.js"></script>
+    <script>
+        // JavaScript pour rendre le menu dynamique
+        window.addEventListener('DOMContentLoaded', (event) => {
+            const menuItems = document.querySelectorAll('.menu ul li');
+            menuItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    menuItems.forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+                });
+            });
+        });
+    </script>
+</head>
+
+<body>
+
+    <div class="menu">
+        <ul>
+            <li class="active">
+                <div class="header">
+                    <img src="img/logo.png" alt="Logo">
+                    <h1>FaceDetect</h1>
+                </div>
+                <a href="page_reussie.php">Accueil</a>
+                <ul class="submenu">
+                    <li><a href="today.php">Aujourd'hui</a></li>
+                    <li><a href="heir.php">Hier</a></li>
+                    <li><a href="affichage_detections.php">recherché un date</a></li>
+                </ul>
+            </li>
+           
+            <li>
+                <a href="#">Paramètres</a>
+                <ul class="submenu">
+                    <li><a href="add_person.html">ajoutée un personne </a></li>
+                    <li><a href="delet_person.html">Supprimer un personne </a></li>
+                    <li><a href="personne.php"> List personnes </a></li>
+                    <li><a href="add_user.html">ajouter un utilisateur</a></li>
+                    <li><a href="delet_user.html">Supprimer un utilisateur</a></li>
+                    <li><a href="modi_user.php">Modifier utilisateur</a></li>
+                    <li><a href="modif_password.html">Changer mot de passer </a></li>
+                </ul>
+            </li>
+            <li><a href="index.html">Déconnexion</a></li>
+        </ul>
+    </div>
+    <div class="content">
+        <h1>Affichage des détections par date </h1>
+        <form action="affichage_detections.php" method="POST">
+            <label for="date">Saisissez une date :</label>
+            <input type="date" id="date" name="date" required>
+            <button type="submit">Afficher les détections</button>
+        </form>
+    </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>
