@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Inscription</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:600&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a81368914c.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        .error-message {
+            color: red;
+            font-size: 0.9em;
+        }
+        #codeProfField {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <img class="wave" src="img/wave (2).png" alt="Wave">
+    <div class="container">
+        <div class="img">
+            <img src="img/bts4.png" alt="BTS">
+        </div>
+        <div class="login-content">
+            <form action="inscrire.php" method="POST">
+                <img src="img/bts2.png" alt="Avatar">
+                <h2 class="title">BTS Cours</h2>
+                <h3 class="title">Créer un compte</h3>
+
+                <!-- Role -->
+                <div class="div">
+                    <h5 class="title">Rôle</h5>
+                    <label><input type="radio" name="role" value="etud" checked onchange="toggleCodeProf()"> Étudiant</label>
+                    <label><input type="radio" name="role" value="prof" onchange="toggleCodeProf()"> Professeur</label>
+                </div>
+
+                <!-- Username -->
+                <div class="input-div one">
+                    <div class="i"><i class="fas fa-user"></i></div>
+                    <div class="div">
+                        <h5>Nom d'utilisateur</h5>
+                        <input type="text" class="input" name="username" required>
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="input-div one">
+                    <div class="i"><i class="fas fa-envelope"></i></div>
+                    <div class="div">
+                        <h5>Email</h5>
+                        <input type="email" class="input" name="email" required>
+                    </div>
+                </div>
+
+                <!-- Genre -->
+                <div class="div">
+                    <h5 class="title">Genre</h5>
+                    <label><input type="radio" name="genre" value="M" checked> Homme</label>
+                    <label><input type="radio" name="genre" value="F"> Femme</label>
+                </div>
+
+                <!-- Password -->
+                <div class="input-div pass">
+                    <div class="i"><i class="fas fa-lock"></i></div>
+                    <div class="div">
+                        <h5>Mot de passe</h5>
+                        <input type="password" class="input" name="passwordd" required>
+                    </div>
+                </div>
+
+                <!-- Code Professeur (conditionally shown) -->
+                <div class="input-div one" id="codeProfField">
+                    <div class="i"><i class="fas fa-id-badge"></i></div>
+                    <div class="div">
+                        <h5>Code Professeur</h5>
+                        <input type="text" class="input" name="code_prof">
+                    </div>
+                </div>
+
+                <!-- Filière -->
+                <div class="input-div one">
+                    <div class="i"><i class="fas fa-graduation-cap"></i></div>
+                    <div class="div">
+                        <h5>Filière </h5>
+                        <input type="text" class="input" name="nom_f" required>
+                    </div>
+                </div>
+
+                <input type="submit" class="btn" value="S'inscrire">
+                <a href="index.html">Déjà inscrit ? Connexion</a>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/main.js" defer></script>
+    <script>
+        function toggleCodeProf() {
+            const role = document.querySelector('input[name="role"]:checked').value;
+            const codeProfField = document.getElementById('codeProfField');
+            if (role === 'prof') {
+                codeProfField.style.display = 'block';
+            } else {
+                codeProfField.style.display = 'none';
+            }
+        }
+
+        // Call on load to adjust based on default
+        document.addEventListener('DOMContentLoaded', toggleCodeProf);
+    </script>
+</body>
+</html>

@@ -6,7 +6,7 @@
 
 body{
     font-family: 'Poppins', sans-serif;
-    overflow: hidden;
+    overflow-y: auto;
     background-color: #3399ff; /* Light grey background */
 }
 
@@ -182,6 +182,11 @@ a:hover{
 .btn:hover{
 	background-position: right;
 }
+.container {
+  min-height: 100vh;
+  overflow-y: auto;
+}
+
 
 @media screen and (max-width: 1050px){
 	.container{
