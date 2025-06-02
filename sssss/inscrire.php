@@ -89,7 +89,7 @@
                 </div>
 
                 <input type="submit" class="btn" value="S'inscrire">
-                <a href="index.html">Déjà inscrit ? Connexion</a>
+                <a href="login.html">Déjà inscrit ? Connexion</a>
             </form>
         </div>
     </div>
