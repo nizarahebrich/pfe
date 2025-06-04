@@ -4,7 +4,7 @@ session_start();
 $host = 'localhost';
 $dbname = 'gestion_cours';
 $user = 'root';
-$pass = '12344321';
+$pass = '2005';
 
 $conn = new mysqli($host, $user, $pass, $dbname);
 if ($conn->connect_error) {
