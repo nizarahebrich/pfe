@@ -10,13 +10,15 @@ if ($conn->connect_error) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $role = $_POST['role'];
-    $username = $_POST['username'];
-    $email = $_POST['email'];
-    $password = password_hash($_POST['passwordd'], PASSWORD_DEFAULT);
-    $genre = $_POST['genre'];
-    $nom_f = $_POST['nom_f'];
+    $role = htmlspecialchars(trim($_POST['role']));
+    $username = htmlspecialchars(trim($_POST['username']));
+    $email = htmlspecialchars(trim($_POST['email']));
+    $password = password_hash(trim($_POST['passwordd']), PASSWORD_DEFAULT);
+    $genre = htmlspecialchars(trim($_POST['genre']));
+    $nom_f = htmlspecialchars(trim($_POST['nom_f']));
+    $code_prof = isset($_POST['code_prof']) ? htmlspecialchars(trim($_POST['code_prof'])) : null;
 
+    // Vérifier si la filière existe déjà
     $stmt = $conn->prepare("SELECT id_f FROM filiere WHERE nom_f = ?");
     $stmt->bind_param("s", $nom_f);
     $stmt->execute();
@@ -38,6 +40,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt = $conn->prepare("INSERT INTO etud (genre, username, email, passwordd, id_f) VALUES (?, ?, ?, ?, ?)");
         $stmt->bind_param("ssssi", $genre, $username, $email, $password, $id_f);
     } elseif ($role === 'prof') {
+        // Vérification du code professeur
+        if ($code_prof !== "2005") {
+            echo "<script>alert('Code Professeur incorrect !'); history.back();</script>";
+            exit();
+        }
         $stmt = $conn->prepare("INSERT INTO prof (genre, username, email, passwordd, id_f) VALUES (?, ?, ?, ?, ?)");
         $stmt->bind_param("ssssi", $genre, $username, $email, $password, $id_f);
     }
@@ -90,20 +97,14 @@ $conn->close();
                     <label><input type="radio" name="role" value="prof" onchange="toggleCodeProf()"> Professeur</label>
                 </div>
 
-                <div class="input-div one">
-                    <div class="i"><i class="fas fa-user"></i></div>
-                    <div class="div">
-                        <h5>Nom d'utilisateur</h5>
-                        <input type="text" class="input" name="username" required>
-                    </div>
+                <div class="floating-label">
+                    <input type="text" id="username" name="username" placeholder=" " required>
+                    <label for="username">Nom d'utilisateur</label>
                 </div>
 
-                <div class="input-div one">
-                    <div class="i"><i class="fas fa-envelope"></i></div>
-                    <div class="div">
-                        <h5>Email</h5>
-                        <input type="email" class="input" name="email" required>
-                    </div>
+                <div class="floating-label">
+                    <input type="email" id="email" name="email" placeholder=" " required>
+                    <label for="email">Email</label>
                 </div>
 
                 <div class="div">
@@ -112,28 +113,19 @@ $conn->close();
                     <label><input type="radio" name="genre" value="F"> Femme</label>
                 </div>
 
-                <div class="input-div pass">
-                    <div class="i"><i class="fas fa-lock"></i></div>
-                    <div class="div">
-                        <h5>Mot de passe</h5>
-                        <input type="password" class="input" name="passwordd" required>
-                    </div>
+                <div class="floating-label">
+                    <input type="password" id="passwordd" name="passwordd" placeholder=" " required>
+                    <label for="passwordd">Mot de passe</label>
                 </div>
 
-                <div class="input-div one" id="codeProfField">
-                    <div class="i"><i class="fas fa-id-badge"></i></div>
-                    <div class="div">
-                        <h5>Code Professeur</h5>
-                        <input type="text" class="input" name="code_prof">
-                    </div>
+                <div class="floating-label" id="codeProfField">
+                    <input type="text" id="code_prof" name="code_prof" placeholder=" ">
+                    <label for="code_prof">Code Professeur</label>
                 </div>
 
-                <div class="input-div one">
-                    <div class="i"><i class="fas fa-graduation-cap"></i></div>
-                    <div class="div">
-                        <h5>Filière </h5>
-                        <input type="text" class="input" name="nom_f" required>
-                    </div>
+                <div class="floating-label">
+                    <input type="text" id="nom_f" name="nom_f" placeholder=" " required>
+                    <label for="nom_f">Filière</label>
                 </div>
 
                 <input type="submit" class="btn" value="S'inscrire">
@@ -141,7 +133,6 @@ $conn->close();
             </form>
         </div>
     </div>
-
     <script>
         function toggleCodeProf() {
             const role = document.querySelector('input[name="role"]:checked').value;

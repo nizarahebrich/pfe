@@ -17,7 +17,7 @@ if (!isset($_SESSION['user_id'])) {
 
 $etud_id = $_SESSION['user_id'];
 
-// Récupérer la filière de l'étudiant
+// Récupérer la filière
 $stmt = $conn->prepare("SELECT id_f FROM etud WHERE id = ?");
 $stmt->bind_param("i", $etud_id);
 $stmt->execute();
@@ -31,28 +31,27 @@ if (!$row) {
 
 $id_filiere = $row['id_f'];
 
-// Sélectionner uniquement les contenus de type 'cour' pour la filière
+// Récupérer les concours (type = 'concours')
 $query = $conn->prepare("
-    SELECT c.titre, c.module, p.username AS prof_nom, c.id_contenu
-    FROM contenu c
-    JOIN prof p ON c.prof = p.id
-    WHERE c.id_f = ? AND c.type = 'cour'
+    SELECT c.id_contenu, c.titre, c.module, c.fichier, p.username AS prof_nom 
+    FROM contenu c 
+    JOIN prof p ON c.prof = p.id 
+    WHERE c.id_f = ? AND c.type = 'concours'
 ");
 $query->bind_param("i", $id_filiere);
 $query->execute();
-$cours = $query->get_result();
+$concours = $query->get_result();
 ?>
 
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <link rel="stylesheet" href="EP.css">
-  <title>Mes Cours</title>
-
+  <title>Concours Disponibles</title>
+  <link rel="stylesheet" href="EP.css" />
 </head>
 <body>
-  <h1>Mes Cours</h1>
+  <h1>📘 Concours Disponibles</h1>
 
   <section class="table-section">
     <table>
@@ -65,22 +64,20 @@ $cours = $query->get_result();
         </tr>
       </thead>
       <tbody>
-        <?php if ($cours->num_rows > 0): ?>
-          <?php while ($row = $cours->fetch_assoc()): ?>
+        <?php if ($concours->num_rows > 0): ?>
+          <?php while ($row = $concours->fetch_assoc()): ?>
             <tr>
               <td><?= htmlspecialchars($row['titre']) ?></td>
               <td><?= htmlspecialchars($row['module']) ?></td>
               <td><?= htmlspecialchars($row['prof_nom']) ?></td>
               <td>
-                <a href="view.php?id=<?= $row['id_contenu'] ?>" target="_blank">Voir</a> |
-                <a href="download.php?id=<?= $row['id_contenu'] ?>">Télécharger</a>
+                <!-- Ici on suppose que fichier est un BLOB donc il faudra un script pour servir le fichier -->
+                <a href="download.php?id=<?= $row['id_contenu'] ?>" target="_blank">Voir / Télécharger</a>
               </td>
             </tr>
           <?php endwhile; ?>
         <?php else: ?>
-          <tr>
-            <td colspan="4">Aucun cours disponible pour votre filière.</td>
-          </tr>
+          <tr><td colspan="4">Aucun concours disponible pour votre filière.</td></tr>
         <?php endif; ?>
       </tbody>
     </table>

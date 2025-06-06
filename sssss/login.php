@@ -22,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $error = "Veuillez remplir tous les champs.";
     } else {
         if ($role !== 'prof' && $role !== 'etud') {
-            $error = "Role invalide.";
+            $error = "Rôle invalide.";
         } else {
             $stmt = $conn->prepare("SELECT id, username, passwordd FROM $role WHERE email = ?");
             if (!$stmt) {
@@ -32,14 +32,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $stmt->execute();
             $result = $stmt->get_result();
             if ($user = $result->fetch_assoc()) {
-                // Password comparison (plaintext for now)
                 if ($password === $user['passwordd']) {
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['username'] = $user['username'];
                     $_SESSION['role'] = $role;
                     $stmt->close();
 
-                    // Redirect based on role, or common dashboard
                     if ($role === 'prof') {
                         header("Location: prof_dashboard.php");
                     } else {
@@ -65,74 +63,63 @@ $conn->close();
 
 <head>
     <meta charset="UTF-8">
-    <title>Login Form</title>
+    <title>Connexion</title>
     <link rel="stylesheet" type="text/css" href="style.css">
     <link href="https://fonts.googleapis.com/css?family=Poppins:600&display=swap" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/a81368914c.js" defer></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        .error-message {
-            color: red;
-            font-size: 0.9em;
-            margin-bottom: 10px;
-        }
-    </style>
+    <script src="https://kit.fontawesome.com/a81368914c.js" crossorigin="anonymous"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body>
     <img class="wave" src="img/wave (2).png" alt="Background Wave Image">
     <div class="container">
         <div class="img">
-            <img src="img/bts4.png" alt="Background Image">
+            <img src="img/bts4.png" alt="Illustration BTS">
         </div>
         <div class="login-content">
-            <form method="POST" novalidate>
-                <img src="img/bts2.png" alt="Avatar">
+            <form method="POST">
+                <img src="img/bts2.png" alt="Logo">
                 <h2 class="title">BTS Cours</h2>
-                <h3 class="title">Welcome</h3>
+                <h3 class="title">Bienvenue</h3>
 
                 <?php if (!empty($error)) : ?>
-                    <div class="error-message" role="alert"><?= htmlspecialchars($error) ?></div>
+                    <div class="error-message" style="color:red; font-size: 0.9rem; margin-bottom: 10px;">
+                        <?= htmlspecialchars($error) ?>
+                    </div>
                 <?php endif; ?>
 
-                <div class="div" role="radiogroup" aria-labelledby="role-label">
-                    <h5 class="title" id="role-label">Role</h5>
-                    <label>
-                        <input type="radio" class="input" name="role" value="prof" <?= (isset($role) && $role === 'prof') ? 'checked' : '' ?> required>
-                        Prof
-                    </label>
-                    <label>
-                        <input type="radio" class="input" name="role" value="etud" <?= (isset($role) && $role === 'etud') ? 'checked' : '' ?> required>
-                        Etud
-                    </label>
-                </div>
-
-                <div class="input-div one">
-                    <div class="i">
-                        <i class="fas fa-user"></i>
+                <div class="radio-group" role="radiogroup" aria-labelledby="role-label">
+                    <label id="role-label">Rôle :</label>
+                    <div class="radio-option">
+                        <label>
+                            <input type="radio" name="role" value="prof" <?= (isset($role) && $role === 'prof') ? 'checked' : '' ?> required>
+                            Professeur
+                        </label>
                     </div>
-                    <div class="div">
-                        <h5>Email</h5>
-                        <input type="email" class="input" name="email" required autocomplete="username" value="<?= isset($email) ? htmlspecialchars($email) : '' ?>">
+                    <div class="radio-option">
+                        <label>
+                            <input type="radio" name="role" value="etud" <?= (isset($role) && $role === 'etud') ? 'checked' : '' ?> required>
+                            Étudiant
+                        </label>
                     </div>
                 </div>
 
-                <div class="input-div pass">
-                    <div class="i">
-                        <i class="fas fa-lock"></i>
-                    </div>
-                    <div class="div">
-                        <h5>Mot de passe</h5>
-                        <input type="password" class="input" name="password" required autocomplete="current-password">
-                    </div>
+                <div class="floating-label">
+                    <input type="email" name="email" id="email" placeholder="Email" required value="<?= isset($email) ? htmlspecialchars($email) : '' ?>">
+                    <label for="email">Adresse e-mail</label>
                 </div>
 
-                <input type="submit" class="btn" value="Login">
-                <a href="inscrire.html">Inscrire?</a>
+                <div class="floating-label">
+                    <input type="password" name="password" id="password" placeholder="Mot de passe" required>
+                    <label for="password">Mot de passe</label>
+                </div>
+
+                <input type="submit" class="btn" value="Se connecter">
+                <a href="inscrire.html">Pas encore inscrit ?</a>
             </form>
         </div>
     </div>
-    <script src="js/main.js" defer></script>
+    <script src="js/main.js"></script>
 </body>
 
 </html>
