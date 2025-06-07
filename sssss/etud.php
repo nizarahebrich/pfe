@@ -16,14 +16,24 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $etud_id = $_SESSION['user_id'];
-$stmt = $conn->prepare("SELECT username FROM etud WHERE id = ?");
+$stmt = $conn->prepare("SELECT username, photo FROM etud WHERE id = ?");
 $stmt->bind_param("i", $etud_id);
 $stmt->execute();
 $result = $stmt->get_result();
 $etud = $result->fetch_assoc();
-$username = htmlspecialchars($etud['username']);
-?>
 
+if (!$etud) {
+    die("Étudiant introuvable.");
+}
+
+$username = htmlspecialchars($etud['username']);
+
+// Chemin vers la photo de profil si existe, sinon photo par défaut
+$photoPath = 'default-profile.jpg';  // image par défaut
+if (!empty($etud['photo']) && file_exists('uploads/photos/' . $etud['photo'])) {
+    $photoPath = 'uploads/photos/' . rawurlencode($etud['photo']);
+}
+?>
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -32,39 +42,45 @@ $username = htmlspecialchars($etud['username']);
   <title>Étudiant - Cours</title>
   <link rel="icon" href="logo.jpg" type="image/jpg">
   <link rel="stylesheet" href="EP.css">
+  <style>
+    /* Exemple simple pour l'image de profil */
+    .profile-label img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+  </style>
 </head>
 <body>
   <div class="profile-menu">
-    <input type="checkbox" id="toggleProfile">
+    <input type="checkbox" id="toggleProfile" />
     <label for="toggleProfile" class="profile-label">
-      <img src="prr.jpg" alt="Profil">
+      <img src="<?= $photoPath ?>" alt="Profil" />
       <span>Mon Profil</span>
     </label>
     <div class="dropdown">
-      <a href="changer_profile.html">Changer Profil</a>
+      <a href="changer_profile.php">Changer Profil</a>
       <a href="logout.php">Se Déconnecter</a>
     </div>
   </div>
 
-  <h1>Bonjour, </h1>
-  // zid php hna 3la nom 
-  
+  <h1>Bonjour, <?= $username ?> !</h1>
 
   <section class="categories">
-    <div class="cat-box" onclick="window.location.href='cours.html'">
-      <img src="cours.png" alt="Cours">
+    <div class="cat-box" onclick="window.location.href='cours.php'">
+      <img src="cours.png" alt="Cours" />
     </div>
-    <div class="cat-box" onclick="window.location.href='exams.html'">
-      <img src="exams.png" alt="Examens">
+    <div class="cat-box" onclick="window.location.href='exams.php'">
+      <img src="exams.png" alt="Examens" />
     </div>
-    <div class="cat-box" onclick="window.location.href='councours.html'">
-      <img src="counc.png" alt="Concours">
+    <div class="cat-box" onclick="window.location.href='councours.php'">
+      <img src="counc.png" alt="Concours" />
     </div>
   </section>
 </body>
 </html>
-
-
-
 
 <?php $conn->close(); ?>

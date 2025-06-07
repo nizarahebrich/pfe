@@ -1,5 +1,6 @@
 <?php
 session_start();
+
 $host = 'localhost';
 $dbname = 'gestion_cours';
 $user = 'root';
@@ -31,9 +32,19 @@ if (!$row) {
 
 $id_filiere = $row['id_f'];
 
-// Sélectionner uniquement les contenus de type 'cour' pour la filière
+// Récupérer les modules distincts pour le combobox (cours uniquement)
+$modulesQuery = $conn->prepare("SELECT DISTINCT module FROM contenu WHERE id_f = ? AND type = 'cours'");
+$modulesQuery->bind_param("i", $id_filiere);
+$modulesQuery->execute();
+$modulesResult = $modulesQuery->get_result();
+$modules = [];
+while ($mod = $modulesResult->fetch_assoc()) {
+    $modules[] = $mod['module'];
+}
+
+// Sélectionner les cours avec prof et fichier
 $query = $conn->prepare("
-    SELECT c.titre, c.module, p.username AS prof_nom, c.id_contenu
+    SELECT c.titre, c.module, p.username AS prof_nom, c.id_contenu, c.fichier
     FROM contenu c
     JOIN prof p ON c.prof = p.id
     WHERE c.id_f = ? AND c.type = 'cour'
@@ -47,15 +58,49 @@ $cours = $query->get_result();
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <link rel="stylesheet" href="EP.css">
+  <link rel="stylesheet" href="EP.css" />
   <title>Mes Cours</title>
-
+  <style>
+    #searchInput, #moduleSelect {
+      margin-bottom: 10px;
+      padding: 5px;
+      width: 300px;
+      font-size: 1rem;
+    }
+    .btn-return {
+      display: inline-block;
+      margin-bottom: 15px;
+      padding: 8px 15px;
+      background-color: #007BFF;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    .btn-return:hover {
+      background-color: #0056b3;
+    }
+  </style>
 </head>
 <body>
   <h1>Mes Cours</h1>
 
+  <!-- Bouton Retour au menu -->
+  <a href="etud.php" class="btn-return">← Retour au menu</a>
+
+  <!-- Barre de recherche -->
+  <input type="text" id="searchInput" placeholder="Rechercher par titre..." onkeyup="filterTable()" />
+
+  <!-- Combobox module -->
+  <select id="moduleSelect" onchange="filterTable()">
+    <option value="">Tous les modules</option>
+    <?php foreach ($modules as $module): ?>
+      <option value="<?= htmlspecialchars($module) ?>"><?= htmlspecialchars($module) ?></option>
+    <?php endforeach; ?>
+  </select>
+
   <section class="table-section">
-    <table>
+    <table border="1" cellpadding="5" cellspacing="0">
       <thead>
         <tr>
           <th>Titre</th>
@@ -72,8 +117,12 @@ $cours = $query->get_result();
               <td><?= htmlspecialchars($row['module']) ?></td>
               <td><?= htmlspecialchars($row['prof_nom']) ?></td>
               <td>
-                <a href="view.php?id=<?= $row['id_contenu'] ?>" target="_blank">Voir</a> |
-                <a href="download.php?id=<?= $row['id_contenu'] ?>">Télécharger</a>
+                <?php if (!empty($row['fichier'])): ?>
+                  <a href="uploads/<?= rawurlencode($row['fichier']) ?>" target="_blank">Voir</a> |
+                  <a href="download.php?id=<?= (int)$row['id_contenu'] ?>">Télécharger</a>
+                <?php else: ?>
+                  Aucun fichier
+                <?php endif; ?>
               </td>
             </tr>
           <?php endwhile; ?>
@@ -85,6 +134,26 @@ $cours = $query->get_result();
       </tbody>
     </table>
   </section>
+
+<script>
+  function filterTable() {
+    const searchInput = document.getElementById('searchInput').value.toLowerCase();
+    const moduleSelect = document.getElementById('moduleSelect').value.toLowerCase();
+    const table = document.querySelector('table tbody');
+    const trs = table.getElementsByTagName('tr');
+
+    for (let i = 0; i < trs.length; i++) {
+      const tdTitre = trs[i].getElementsByTagName('td')[0].textContent.toLowerCase();
+      const tdModule = trs[i].getElementsByTagName('td')[1].textContent.toLowerCase();
+
+      const matchesTitle = tdTitre.includes(searchInput);
+      const matchesModule = moduleSelect === '' || tdModule === moduleSelect;
+
+      trs[i].style.display = (matchesTitle && matchesModule) ? '' : 'none';
+    }
+  }
+</script>
+
 </body>
 </html>
 

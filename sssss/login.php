@@ -4,7 +4,7 @@ session_start();
 $host = 'localhost';
 $dbname = 'gestion_cours';
 $user = 'root';
-$pass = '2005';
+$pass = '12344321';
 
 $conn = new mysqli($host, $user, $pass, $dbname);
 if ($conn->connect_error) {
@@ -39,7 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     $stmt->close();
 
                     if ($role === 'prof') {
-                        header("Location: prof_dashboard.php");
+                        header("Location: prof.php");
                     } else {
                         header("Location: etud.php");
                     }
@@ -87,6 +87,18 @@ $conn->close();
                         <?= htmlspecialchars($error) ?>
                     </div>
                 <?php endif; ?>
+<style>
+  .radio-group {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+  .radio-option {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+</style>
 
                 <div class="radio-group" role="radiogroup" aria-labelledby="role-label">
                     <label id="role-label">Rôle :</label>
@@ -115,7 +127,7 @@ $conn->close();
                 </div>
 
                 <input type="submit" class="btn" value="Se connecter">
-                <a href="inscrire.html">Pas encore inscrit ?</a>
+                <a href="inscrire.php">Pas encore inscrit ?</a>
             </form>
         </div>
     </div>

@@ -13,12 +13,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $role = htmlspecialchars(trim($_POST['role']));
     $username = htmlspecialchars(trim($_POST['username']));
     $email = htmlspecialchars(trim($_POST['email']));
-    $password = password_hash(trim($_POST['passwordd']), PASSWORD_DEFAULT);
+    $password = trim($_POST['passwordd']);
     $genre = htmlspecialchars(trim($_POST['genre']));
     $nom_f = htmlspecialchars(trim($_POST['nom_f']));
     $code_prof = isset($_POST['code_prof']) ? htmlspecialchars(trim($_POST['code_prof'])) : null;
 
-    // Vérifier si la filière existe déjà
     $stmt = $conn->prepare("SELECT id_f FROM filiere WHERE nom_f = ?");
     $stmt->bind_param("s", $nom_f);
     $stmt->execute();
@@ -40,7 +39,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt = $conn->prepare("INSERT INTO etud (genre, username, email, passwordd, id_f) VALUES (?, ?, ?, ?, ?)");
         $stmt->bind_param("ssssi", $genre, $username, $email, $password, $id_f);
     } elseif ($role === 'prof') {
-        // Vérification du code professeur
         if ($code_prof !== "2005") {
             echo "<script>alert('Code Professeur incorrect !'); history.back();</script>";
             exit();
@@ -50,7 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     if ($stmt->execute()) {
-        echo "<script>alert('Inscription réussie !'); window.location.href='login.html';</script>";
+        echo "<script>alert('Inscription réussie !'); window.location.href='login.php';</script>";
     } else {
         if ($conn->errno === 1062) {
             echo "<script>alert('Erreur : Email déjà utilisé.'); history.back();</script>";
@@ -63,7 +61,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 $conn->close();
 ?>
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -86,7 +83,7 @@ $conn->close();
             <img src="img/bts4.png" alt="BTS">
         </div>
         <div class="login-content">
-            <form method="POST">
+            <form method="POST" action="">
                 <img src="img/bts2.png" alt="Avatar">
                 <h2 class="title">BTS Cours</h2>
                 <h3 class="title">Créer un compte</h3>
@@ -129,7 +126,7 @@ $conn->close();
                 </div>
 
                 <input type="submit" class="btn" value="S'inscrire">
-                <a href="login.html">Déjà inscrit ? Connexion</a>
+                <a href="login.php">Déjà inscrit ? Connexion</a>
             </form>
         </div>
     </div>

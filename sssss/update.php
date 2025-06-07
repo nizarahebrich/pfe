@@ -17,15 +17,11 @@ if (!isset($_SESSION['user_id']) || !isset($_GET['id'])) {
 
 $id = intval($_GET['id']);
 $prof_id = $_SESSION['user_id'];
-
-// Get filieres
 $filiereResult = $conn->query("SELECT id_f, nom_f FROM filiere");
 $filieres = [];
 while ($row = $filiereResult->fetch_assoc()) {
     $filieres[$row['id_f']] = $row['nom_f'];
 }
-
-// Fetch current content
 $stmt = $conn->prepare("SELECT * FROM contenu WHERE id_contenu = ? AND prof = ?");
 $stmt->bind_param("ii", $id, $prof_id);
 $stmt->execute();
@@ -42,7 +38,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $filiere = $_POST['filiere'];
     $fichier = $content['fichier'];
 
-    // If a new file is uploaded
     if (!empty($_FILES['fichier']['name'])) {
         $targetDir = "uploads/";
         $fileName = uniqid() . "_" . basename($_FILES["fichier"]["name"]);
