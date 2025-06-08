@@ -22,7 +22,6 @@ if ($conn->connect_error) {
     die("Erreur de connexion : " . $conn->connect_error);
 }
 
-// Récupérer le nom du fichier en base
 $stmt = $conn->prepare("SELECT fichier FROM contenu WHERE id_contenu = ?");
 $stmt->bind_param("i", $id);
 $stmt->execute();
@@ -35,14 +34,12 @@ if (!$filename) {
     die("Fichier introuvable.");
 }
 
-// Chemin complet vers le fichier sur le serveur
 $filePath = __DIR__ . "/uploads/" . basename($filename);
 
 if (!file_exists($filePath)) {
     die("Fichier non trouvé sur le serveur.");
 }
 
-// Envoi des headers pour forcer le téléchargement
 header('Content-Description: File Transfer');
 header('Content-Type: application/octet-stream');
 header('Content-Disposition: attachment; filename="' . basename($filename) . '"');

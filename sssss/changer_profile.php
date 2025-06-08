@@ -18,9 +18,8 @@ if (!isset($_SESSION['user_id'])) {
 
 $etud_id = $_SESSION['user_id'];
 $message = "";
-$message_type = ""; // "success" or "error"
+$message_type = "";
 
-// Fetch current user data, including photo
 $stmt = $conn->prepare("SELECT username, email, passwordd, photo FROM etud WHERE id = ?");
 $stmt->bind_param("i", $etud_id);
 $stmt->execute();
@@ -36,7 +35,7 @@ $current_email = $user['email'];
 $current_password_db = $user['passwordd'];
 $current_photo = $user['photo'] ?? null;
 
-$passwords_hashed = false; // adapte selon ton usage
+$passwords_hashed = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name'] ?? '');
@@ -45,7 +44,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $new_password = $_POST['password'] ?? '';
     $confirm_password = $_POST['confirm_password'] ?? '';
 
-    // Vérification du mot de passe actuel
     if ($passwords_hashed) {
         if (!password_verify($current_password, $current_password_db)) {
             $message = "Mot de passe actuel incorrect.";
@@ -57,34 +55,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $message_type = "error";
         }
     }
-
-    // Vérification confirmation mot de passe
     if (empty($message) && $new_password !== $confirm_password) {
         $message = "Le nouveau mot de passe et sa confirmation ne correspondent pas.";
         $message_type = "error";
     }
 
-    // Gestion de l'upload photo
     $upload_dir = __DIR__ . '/uploads/photos/';
     if (!file_exists($upload_dir)) {
         mkdir($upload_dir, 0755, true);
     }
 
-    $new_photo_filename = $current_photo; // par défaut, on garde l'ancienne
+    $new_photo_filename = $current_photo;
 
     if (empty($message) && isset($_FILES['photo']) && $_FILES['photo']['error'] !== UPLOAD_ERR_NO_FILE) {
         $photo = $_FILES['photo'];
 
-        // Vérifications simples (taille, type)
         $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
         if (!in_array($photo['type'], $allowed_types)) {
             $message = "Format de fichier non autorisé. Seuls JPEG, PNG, GIF sont acceptés.";
             $message_type = "error";
-        } elseif ($photo['size'] > 2 * 1024 * 1024) { // 2 Mo max
+        } elseif ($photo['size'] > 2 * 1024 * 1024) { 
             $message = "Le fichier est trop volumineux (max 2 Mo).";
             $message_type = "error";
         } else {
-            // Générer un nom unique pour éviter écrasement
+  
             $ext = pathinfo($photo['name'], PATHINFO_EXTENSION);
             $new_photo_filename = uniqid('photo_') . '.' . $ext;
 
@@ -94,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $message = "Erreur lors de l'upload de la photo.";
                 $message_type = "error";
             } else {
-                // Supprimer ancienne photo si existante et différente de défaut
+                
                 if ($current_photo && file_exists($upload_dir . $current_photo)) {
                     unlink($upload_dir . $current_photo);
                 }
@@ -102,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // Mise à jour si pas d'erreur
+  
     if (empty($message)) {
         if ($passwords_hashed) {
             $password_to_store = password_hash($new_password, PASSWORD_DEFAULT);

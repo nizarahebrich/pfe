@@ -26,6 +26,16 @@ if ($conn->connect_error) {
 
 $prof = $_SESSION['user_id'];
 
+if (isset($_GET['delete_id'])) {
+    $delete_id = intval($_GET['delete_id']);
+    $delete_stmt = $conn->prepare("DELETE FROM contenu WHERE id_contenu = ? AND prof = ?");
+    $delete_stmt->bind_param("ii", $delete_id, $prof);
+    $delete_stmt->execute();
+    $delete_stmt->close();
+    header("Location: vos_cours.php");
+    exit();
+}
+
 $sql = "SELECT id_contenu, titre, module, type, fichier FROM contenu WHERE prof = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $prof);
@@ -142,14 +152,16 @@ $conn->close();
         a.download-link:hover {
             text-decoration: underline;
         }
-        .menu::-webkit-scrollbar,
-        .content::-webkit-scrollbar {
-            width: 6px;
+        .action-links a {
+            margin-right: 10px;
+            text-decoration: none;
+            font-weight: bold;
         }
-        .menu::-webkit-scrollbar-thumb,
-        .content::-webkit-scrollbar-thumb {
-            background-color: rgba(0,0,0,0.1);
-            border-radius: 3px;
+        .action-links a.edit {
+            color: #28a745;
+        }
+        .action-links a.delete {
+            color: #dc3545;
         }
     </style>
 </head>
@@ -170,9 +182,7 @@ $conn->close();
             </ul>
         </li>
         <li>
-            <a href="logout.php" style="color:#dc3545;">
-                Déconnexion
-            </a>
+            <a href="logout.php" style="color:#dc3545;">Déconnexion</a>
         </li>
     </ul>
 </div>
@@ -190,22 +200,24 @@ $conn->close();
                     <th>Module</th>
                     <th>Type</th>
                     <th>Fichier</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <?php foreach ($contenus as $contenu): ?>
-                    <?php
-                    if (empty($contenu['titre']) || empty($contenu['fichier'])) {
-                        continue;
-                    }
-                    ?>
+                    <?php if (empty($contenu['titre']) || empty($contenu['fichier'])) continue; ?>
                     <tr>
-                        <td><?php echo htmlspecialchars($contenu['titre']); ?></td>
-                        <td><?php echo htmlspecialchars($contenu['module']); ?></td>
-                        <td><?php echo htmlspecialchars(ucfirst($contenu['type'])); ?></td>
+                        <td><?= htmlspecialchars($contenu['titre']); ?></td>
+                        <td><?= htmlspecialchars($contenu['module']); ?></td>
+                        <td><?= htmlspecialchars(ucfirst($contenu['type'])); ?></td>
                         <td>
-                            <a class="download-link" href="uploads/<?php echo urlencode($contenu['fichier']); ?>" target="_blank" rel="noopener noreferrer">
-                                Voir
+                            <a class="download-link" href="uploads/<?= urlencode($contenu['fichier']); ?>" target="_blank" rel="noopener noreferrer">Voir</a>
+                        </td>
+                        <td class="action-links">
+                            <a class="edit" href="modifier_contenu.php?id=<?= $contenu['id_contenu']; ?>">Modifier</a>
+                            <a class="delete" href="vos_cours.php?delete_id=<?= $contenu['id_contenu']; ?>"
+                               onclick="return confirm('Voulez-vous vraiment supprimer ce contenu ?');">
+                                Supprimer
                             </a>
                         </td>
                     </tr>

@@ -17,7 +17,6 @@ if (!isset($_SESSION['user_id'])) {
 
 $etud_id = $_SESSION['user_id'];
 
-// Récupérer la filière
 $stmt = $conn->prepare("SELECT id_f FROM etud WHERE id = ?");
 $stmt->bind_param("i", $etud_id);
 $stmt->execute();
@@ -31,7 +30,6 @@ if (!$row) {
 
 $id_filiere = $row['id_f'];
 
-// Récupérer les modules distincts pour le combobox
 $modulesQuery = $conn->prepare("SELECT DISTINCT module FROM contenu WHERE id_f = ? AND type = 'concours'");
 $modulesQuery->bind_param("i", $id_filiere);
 $modulesQuery->execute();
@@ -41,7 +39,6 @@ while ($mod = $modulesResult->fetch_assoc()) {
     $modules[] = $mod['module'];
 }
 
-// Récupérer les concours (type = 'concours') avec nom prof
 $query = $conn->prepare("
     SELECT c.id_contenu, c.titre, c.module, c.fichier, p.username AS prof_nom 
     FROM contenu c 
@@ -71,10 +68,8 @@ $concours = $query->get_result();
 <body>
   <h1>📘 Concours Disponibles</h1>
 
-  <!-- Barre de recherche -->
   <input type="text" id="searchInput" placeholder="Rechercher par titre..." onkeyup="filterTable()" />
 
-  <!-- Combobox module -->
   <select id="moduleSelect" onchange="filterTable()">
     <option value="">Tous les modules</option>
     <?php foreach ($modules as $module): ?>
@@ -102,6 +97,8 @@ $concours = $query->get_result();
               <td>
                 <?php if ($row['fichier']): ?>
                   <a href="uploads/<?= rawurlencode($row['fichier']) ?>" target="_blank">Voir</a>
+                  &nbsp;|&nbsp;
+                  <a href="uploads/<?= rawurlencode($row['fichier']) ?>" download>Télécharger</a>
                 <?php else: ?>
                   Aucun fichier
                 <?php endif; ?>
@@ -129,7 +126,6 @@ $concours = $query->get_result();
         const tdTitre = trs[i].getElementsByTagName('td')[0].textContent.toLowerCase();
         const tdModule = trs[i].getElementsByTagName('td')[1].textContent.toLowerCase();
 
-        // Filtrer par titre et module
         const matchesTitle = tdTitre.includes(searchInput);
         const matchesModule = moduleSelect === '' || tdModule === moduleSelect;
 

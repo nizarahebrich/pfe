@@ -28,8 +28,7 @@ if (!$etud) {
 
 $username = htmlspecialchars($etud['username']);
 
-// Chemin vers la photo de profil si existe, sinon photo par défaut
-$photoPath = 'default-profile.jpg';  // image par défaut
+$photoPath = 'default-profile.jpg';
 if (!empty($etud['photo']) && file_exists('uploads/photos/' . $etud['photo'])) {
     $photoPath = 'uploads/photos/' . rawurlencode($etud['photo']);
 }
@@ -43,7 +42,6 @@ if (!empty($etud['photo']) && file_exists('uploads/photos/' . $etud['photo'])) {
   <link rel="icon" href="logo.jpg" type="image/jpg">
   <link rel="stylesheet" href="EP.css">
   <style>
-    /* Exemple simple pour l'image de profil */
     .profile-label img {
       width: 50px;
       height: 50px;

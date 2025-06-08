@@ -1,5 +1,6 @@
 <?php
 session_start();
+
 $host = 'localhost';
 $dbname = 'gestion_cours';
 $user = 'root';
@@ -11,13 +12,12 @@ if ($conn->connect_error) {
 }
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.html");
+    header("Location: login.php");
     exit();
 }
 
 $etud_id = $_SESSION['user_id'];
 
-// Get student's filiere
 $stmt = $conn->prepare("SELECT id_f FROM etud WHERE id = ?");
 $stmt->bind_param("i", $etud_id);
 $stmt->execute();
@@ -31,8 +31,7 @@ if (!$row) {
 
 $id_filiere = $row['id_f'];
 
-// Get distinct exam modules for ComboBox
-$modulesQuery = $conn->prepare("SELECT DISTINCT module FROM contenu WHERE id_f = ? AND type = 'exam'");
+$modulesQuery = $conn->prepare("SELECT DISTINCT module FROM contenu WHERE id_f = ? AND LOWER(type) = 'cours'");
 $modulesQuery->bind_param("i", $id_filiere);
 $modulesQuery->execute();
 $modulesResult = $modulesQuery->get_result();
@@ -41,22 +40,22 @@ while ($mod = $modulesResult->fetch_assoc()) {
     $modules[] = $mod['module'];
 }
 
-// Get all exams
 $query = $conn->prepare("
     SELECT c.titre, c.module, p.username AS prof_nom, c.id_contenu, c.fichier
     FROM contenu c
     JOIN prof p ON c.prof = p.id
-    WHERE c.id_f = ? AND c.type = 'Examen'
+    WHERE c.id_f = ? AND LOWER(c.type) = 'cours'
 ");
 $query->bind_param("i", $id_filiere);
 $query->execute();
-$exams = $query->get_result();
+$cours = $query->get_result();
 ?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>📘 Exams Disponibles</title>
+  <title>Mes Cours</title>
   <link rel="stylesheet" href="EP.css" />
   <style>
     #searchInput, #moduleSelect {
@@ -64,72 +63,87 @@ $exams = $query->get_result();
       padding: 5px;
       width: 300px;
       font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
     }
-    .btn-return {
-      display: inline-block;
-      margin-bottom: 15px;
-      padding: 8px 15px;
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      padding: 8px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+    th {
       background-color: #007BFF;
       color: white;
+    }
+    tr:hover {
+      background-color: #f0f8ff;
+    }
+    a {
+      color: #007BFF;
       text-decoration: none;
-      border-radius: 4px;
       font-weight: bold;
     }
-    .btn-return:hover {
-      background-color: #0056b3;
+    a:hover {
+      text-decoration: underline;
+    }
+    .back-link {
+      display: inline-block;
+      margin-top: 15px;
+      font-size: 1rem;
     }
   </style>
 </head>
 <body>
-  <h1>📘 Exams Disponibles</h1>
+  <h1>Mes Cours</h1>
 
-  <!-- Bouton Retour au menu -->
-  <a href="etud.php" class="btn-return">← Retour au menu</a>
-
-  <!-- Barre de recherche -->
   <input type="text" id="searchInput" placeholder="Rechercher par titre..." onkeyup="filterTable()" />
-
-  <!-- ComboBox de modules -->
   <select id="moduleSelect" onchange="filterTable()">
     <option value="">Tous les modules</option>
     <?php foreach ($modules as $module): ?>
-      <option value="<?= htmlspecialchars($module) ?>"><?= htmlspecialchars($module) ?></option>
+      <option value="<?= htmlspecialchars(strtolower($module)) ?>"><?= htmlspecialchars($module) ?></option>
     <?php endforeach; ?>
   </select>
 
-  <section class="table-section">
-    <table border="1" cellpadding="5" cellspacing="0">
-      <thead>
-        <tr>
-          <th>Titre</th>
-          <th>Module</th>
-          <th>Professeur</th>
-          <th>Fichier</th>
-        </tr>
-      </thead>
-      <tbody>
-        <?php if ($exams->num_rows === 0): ?>
-          <tr><td colspan="4">Aucun examen disponible pour votre filière.</td></tr>
-        <?php else: ?>
-          <?php while ($exam = $exams->fetch_assoc()): ?>
+  <table>
+    <thead>
+      <tr>
+        <th>Titre</th>
+        <th>Module</th>
+        <th>Professeur</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php if ($cours->num_rows > 0): ?>
+        <?php while ($row = $cours->fetch_assoc()): ?>
           <tr>
-            <td><?= htmlspecialchars($exam['titre']) ?></td>
-            <td><?= htmlspecialchars($exam['module']) ?></td>
-            <td><?= htmlspecialchars($exam['prof_nom']) ?></td>
+            <td><?= htmlspecialchars($row['titre']) ?></td>
+            <td><?= htmlspecialchars($row['module']) ?></td>
+            <td><?= htmlspecialchars($row['prof_nom']) ?></td>
             <td>
-              <?php if (!empty($exam['fichier'])): ?>
-                <a href="uploads/<?= rawurlencode($exam['fichier']) ?>" target="_blank">Voir</a> |
-                <a href="download.php?id=<?= $exam['id_contenu'] ?>">Télécharger</a>
+              <?php if (!empty($row['fichier'])): ?>
+                <a href="uploads/<?= rawurlencode($row['fichier']) ?>" target="_blank">Voir</a> |
+                <a href="uploads/<?= rawurlencode($row['fichier']) ?>" download>Télécharger</a>
               <?php else: ?>
                 Aucun fichier
               <?php endif; ?>
             </td>
           </tr>
-          <?php endwhile; ?>
-        <?php endif; ?>
-      </tbody>
-    </table>
-  </section>
+        <?php endwhile; ?>
+      <?php else: ?>
+        <tr>
+          <td colspan="4">Aucun cours disponible pour votre filière.</td>
+        </tr>
+      <?php endif; ?>
+    </tbody>
+  </table>
+
+  <a href="etud.php" class="back-link">← Retour au menu</a>
 
 <script>
   function filterTable() {
@@ -152,6 +166,5 @@ $exams = $query->get_result();
 
 </body>
 </html>
-<?php
-$conn->close();
-?>
+
+<?php $conn->close(); ?>

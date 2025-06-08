@@ -7,89 +7,89 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 function isActive($pageName) {
-    $currentFile = basename($_SERVER['PHP_SELF']);
-    return $currentFile === $pageName ? 'active' : '';
+    return basename($_SERVER['PHP_SELF']) === $pageName ? 'active' : '';
 }
 
 function isSubActive($pageName) {
-    $currentFile = basename($_SERVER['PHP_SELF']);
-    return $currentFile === $pageName ? 'active-submenu' : '';
+    return basename($_SERVER['PHP_SELF']) === $pageName ? 'active-submenu' : '';
 }
 
 $insertError = "";
 $insertSuccess = "";
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $titre = trim($_POST['titre'] ?? '');
     $module = trim($_POST['module'] ?? '');
     $type = trim($_POST['type'] ?? '');
     $prof = $_SESSION['user_id'];
-    $servername = "localhost";
-    $username = "root";
-    $password = "12344321";
-    $dbname = "gestion_cours";
 
-    $conn = new mysqli($servername, $username, $password, $dbname);
-    if ($conn->connect_error) {
-        die("Erreur de connexion: " . $conn->connect_error);
-    }
-    $sql = "SELECT id_f FROM prof WHERE id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $prof);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    if ($result->num_rows === 0) {
-        $insertError = "Professeur non trouvé.";
+    $allowedTypes = ['cours', 'examen', 'concours'];
+
+    if (!in_array($type, $allowedTypes)) {
+        $insertError = "Type de contenu invalide.";
     } else {
-        $row = $result->fetch_assoc();
-        $id_f = $row['id_f'];
-        $fichier_nom = null;
-        if (isset($_FILES['fichier']) && $_FILES['fichier']['error'] === UPLOAD_ERR_OK) {
-            $fileTmpPath = $_FILES['fichier']['tmp_name'];
-            $fileName = $_FILES['fichier']['name'];
-            $fileSize = $_FILES['fichier']['size'];
-            $fileType = $_FILES['fichier']['type'];
-            $fileNameCmps = explode(".", $fileName);
-            $fileExtension = strtolower(end($fileNameCmps));
+        $conn = new mysqli("localhost", "root", "12344321", "gestion_cours");
+        if ($conn->connect_error) {
+            die("Erreur de connexion: " . $conn->connect_error);
+        }
 
-            $allowedfileExtensions = ['pdf', 'doc', 'docx', 'ppt', 'pptx'];
+        $stmt = $conn->prepare("SELECT id_f FROM prof WHERE id = ?");
+        $stmt->bind_param("i", $prof);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-            if (in_array($fileExtension, $allowedfileExtensions)) {
-                $newFileName = md5(time() . $fileName) . '.' . $fileExtension;
-                $uploadFileDir = './uploads/';
-                if (!is_dir($uploadFileDir)) {
-                    mkdir($uploadFileDir, 0755, true);
-                }
-                $dest_path = $uploadFileDir . $newFileName;
-                if (move_uploaded_file($fileTmpPath, $dest_path)) {
-                    $fichier_nom = $newFileName;
-                } else {
-                    $insertError = "Erreur lors du téléchargement du fichier.";
-                }
-            } else {
-                $insertError = "Type de fichier non autorisé. Autorisé: " . implode(", ", $allowedfileExtensions);
-            }
+        if ($result->num_rows === 0) {
+            $insertError = "Professeur non trouvé.";
         } else {
-            $insertError = "Veuillez sélectionner un fichier.";
-        }
-        if (empty($insertError)) {
-            $stmt = $conn->prepare("INSERT INTO contenu (id_f, prof, titre, module, fichier, type) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("iissss", $id_f, $prof, $titre, $module, $fichier_nom, $type);
-            if ($stmt->execute()) {
-                $insertSuccess = "Contenu ajouté avec succès.";
+            $id_f = $result->fetch_assoc()['id_f'];
+            $fichier_nom = null;
+
+            if (isset($_FILES['fichier']) && $_FILES['fichier']['error'] === UPLOAD_ERR_OK) {
+                $fileTmpPath = $_FILES['fichier']['tmp_name'];
+                $fileName = $_FILES['fichier']['name'];
+                $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+
+                $allowedfileExtensions = ['pdf', 'doc', 'docx', 'ppt', 'pptx'];
+                if (in_array($fileExtension, $allowedfileExtensions)) {
+                    $newFileName = md5(time() . $fileName) . '.' . $fileExtension;
+                    $uploadDir = './uploads/';
+                    if (!is_dir($uploadDir)) {
+                        mkdir($uploadDir, 0755, true);
+                    }
+                    $destPath = $uploadDir . $newFileName;
+                    if (move_uploaded_file($fileTmpPath, $destPath)) {
+                        $fichier_nom = $newFileName;
+                    } else {
+                        $insertError = "Erreur lors du téléchargement du fichier.";
+                    }
+                } else {
+                    $insertError = "Type de fichier non autorisé.";
+                }
             } else {
-                $insertError = "Erreur lors de l'ajout du contenu : " . $stmt->error;
+                $insertError = "Veuillez sélectionner un fichier.";
             }
-            $stmt->close();
+
+            if (empty($insertError)) {
+                $stmt = $conn->prepare("INSERT INTO contenu (id_f, prof, titre, module, fichier, type) VALUES (?, ?, ?, ?, ?, ?)");
+                $stmt->bind_param("iissss", $id_f, $prof, $titre, $module, $fichier_nom, $type);
+                if ($stmt->execute()) {
+                    $insertSuccess = "Contenu ajouté avec succès.";
+                } else {
+                    $insertError = "Erreur lors de l'ajout : " . $stmt->error;
+                }
+                $stmt->close();
+            }
         }
+
+        $conn->close();
     }
-    $conn->close();
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8">
     <title>Ajouter un Contenu</title>
     <style>
         body {
@@ -110,39 +110,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .menu ul {
             list-style: none;
             padding: 0;
-            margin: 0;
         }
         .menu ul li {
             margin: 0.5em 0;
-            position: relative;
         }
         .menu ul li a {
-            color: #333;
-            text-decoration: none;
-            font-weight: 600;
             display: block;
-            padding: 8px 15px;
+            padding: 10px;
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
             border-radius: 5px;
-            transition: background-color 0.3s ease;
         }
         .menu ul li a:hover,
         .menu ul li.active > a {
             background-color: #0d6efd;
-            color: white;
+            color: #fff;
         }
         .menu ul li .submenu {
-            list-style: none;
-            padding-left: 15px;
-            margin-top: 5px;
-            display: none;
-        }
-        .menu ul li.active > .submenu {
             display: block;
+            padding-left: 15px;
         }
         .menu ul li .submenu li a.active-submenu {
             background-color: #0d6efd;
-            color: white;
-            font-weight: 700;
+            color: #fff;
         }
         .menu .header img {
             max-width: 50px;
@@ -152,56 +143,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             display: inline-block;
             margin-left: 0.5em;
             color: #0d6efd;
-            font-weight: 700;
-            font-size: 1.5em;
-            vertical-align: middle;
         }
         .content {
             flex-grow: 1;
-            padding: 30px 40px;
-            background: white;
+            padding: 40px;
+            background: #fff;
             overflow-y: auto;
-        }
-        h1 {
-            margin-bottom: 24px;
-            color: #333;
         }
         form {
             max-width: 500px;
-            display: flex;
-            flex-direction: column;
         }
         label {
-            margin-bottom: 6px;
+            display: block;
+            margin-bottom: 8px;
             font-weight: 600;
-            color: #555;
         }
         input[type="text"],
         select,
         input[type="file"] {
-            padding: 10px 12px;
+            width: 100%;
+            padding: 10px;
             margin-bottom: 18px;
             border: 1px solid #ccc;
             border-radius: 4px;
-            font-size: 15px;
-            transition: border-color 0.3s ease;
-        }
-        input[type="text"]:focus,
-        select:focus,
-        input[type="file"]:focus {
-            border-color: #007bff;
-            outline: none;
         }
         button {
             padding: 12px;
             background-color: #007bff;
-            color: white;
-            font-size: 16px;
-            font-weight: 600;
+            color: #fff;
             border: none;
+            font-weight: bold;
             border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
         }
         button:hover {
             background-color: #0056b3;
@@ -210,16 +183,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             margin-bottom: 20px;
             font-weight: 600;
         }
-        .error {
-            color: #dc3545;
-        }
-        .success {
-            color: #28a745;
-        }
-        .menu {
-            height: 100vh;
-            overflow-y: auto;
-        }
+        .error { color: #dc3545; }
+        .success { color: #28a745; }
     </style>
 </head>
 <body>
@@ -232,17 +197,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <h1>Professeur</h1>
             </div>
             <a href="prof.php">Accueil</a>
-            <ul class="submenu" style="display: block;">
+            <ul class="submenu">
                 <li><a href="ajouter_contenu.php" class="<?php echo isSubActive('ajouter_contenu.php'); ?>">Ajouter Contenu</a></li>
                 <li><a href="vos_cours.php" class="<?php echo isSubActive('vos_cours.php'); ?>">Vos Cours</a></li>
                 <li><a href="tous_cours.php" class="<?php echo isSubActive('tous_cours.php'); ?>">Tous les Cours Dispo</a></li>
             </ul>
         </li>
-        <li>
-            <a href="logout.php" style="color:#dc3545;">
-                Déconnexion <i class="fas fa-sign-out-alt"></i>
-            </a>
-        </li>
+        <li><a href="logout.php" style="color: #dc3545;">Déconnexion</a></li>
     </ul>
 </div>
 
@@ -259,21 +220,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <form action="ajouter_contenu.php" method="POST" enctype="multipart/form-data">
         <label for="titre">Titre du contenu</label>
-        <input type="text" id="titre" name="titre" placeholder="Titre du contenu" required />
+        <input type="text" id="titre" name="titre" required>
 
         <label for="module">Module</label>
-        <input type="text" id="module" name="module" placeholder="Module" required />
+        <input type="text" id="module" name="module" required>
 
         <label for="type">Type de contenu</label>
         <select id="type" name="type" required>
             <option value="" disabled selected>-- Choisir Type --</option>
-            <option value="cour">Cours</option>
-            <option value="exam">Examen</option>
-            <option value="concour">Concours</option>
+            <option value="cours">Cours</option>
+            <option value="examen">Examen</option>
+            <option value="concours">Concours</option>
         </select>
 
         <label for="fichier">Fichier (PDF, DOC, DOCX, PPT, PPTX)</label>
-        <input type="file" id="fichier" name="fichier" accept=".pdf,.doc,.docx,.ppt,.pptx" required />
+        <input type="file" id="fichier" name="fichier" accept=".pdf,.doc,.docx,.ppt,.pptx" required>
 
         <button type="submit">Ajouter</button>
     </form>

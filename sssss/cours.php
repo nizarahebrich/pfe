@@ -12,13 +12,12 @@ if ($conn->connect_error) {
 }
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.html");
+    header("Location: login.php");
     exit();
 }
 
 $etud_id = $_SESSION['user_id'];
 
-// Récupérer la filière de l'étudiant
 $stmt = $conn->prepare("SELECT id_f FROM etud WHERE id = ?");
 $stmt->bind_param("i", $etud_id);
 $stmt->execute();
@@ -32,8 +31,7 @@ if (!$row) {
 
 $id_filiere = $row['id_f'];
 
-// Récupérer les modules distincts pour le combobox (cours uniquement)
-$modulesQuery = $conn->prepare("SELECT DISTINCT module FROM contenu WHERE id_f = ? AND type = 'cours'");
+$modulesQuery = $conn->prepare("SELECT DISTINCT module FROM contenu WHERE id_f = ? AND LOWER(type) = 'cours'");
 $modulesQuery->bind_param("i", $id_filiere);
 $modulesQuery->execute();
 $modulesResult = $modulesQuery->get_result();
@@ -42,12 +40,11 @@ while ($mod = $modulesResult->fetch_assoc()) {
     $modules[] = $mod['module'];
 }
 
-// Sélectionner les cours avec prof et fichier
 $query = $conn->prepare("
     SELECT c.titre, c.module, p.username AS prof_nom, c.id_contenu, c.fichier
     FROM contenu c
     JOIN prof p ON c.prof = p.id
-    WHERE c.id_f = ? AND c.type = 'cours'
+    WHERE c.id_f = ? AND LOWER(c.type) = 'cours'
 ");
 $query->bind_param("i", $id_filiere);
 $query->execute();
@@ -58,82 +55,91 @@ $cours = $query->get_result();
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <link rel="stylesheet" href="EP.css" />
   <title>Mes Cours</title>
+  <link rel="stylesheet" href="EP.css" />
   <style>
     #searchInput, #moduleSelect {
       margin-bottom: 10px;
       padding: 5px;
       width: 300px;
       font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
     }
-    .btn-return {
-      display: inline-block;
-      margin-bottom: 15px;
-      padding: 8px 15px;
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      padding: 8px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+    th {
       background-color: #007BFF;
       color: white;
+    }
+    tr:hover {
+      background-color: #f0f8ff;
+    }
+    a {
+      color: #007BFF;
       text-decoration: none;
-      border-radius: 4px;
       font-weight: bold;
     }
-    .btn-return:hover {
-      background-color: #0056b3;
+    a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
   <h1>Mes Cours</h1>
 
-  <!-- Bouton Retour au menu -->
-  <a href="etud.php" class="btn-return">← Retour au menu</a>
-
-  <!-- Barre de recherche -->
   <input type="text" id="searchInput" placeholder="Rechercher par titre..." onkeyup="filterTable()" />
-
-  <!-- Combobox module -->
   <select id="moduleSelect" onchange="filterTable()">
     <option value="">Tous les modules</option>
     <?php foreach ($modules as $module): ?>
-      <option value="<?= htmlspecialchars($module) ?>"><?= htmlspecialchars($module) ?></option>
+      <option value="<?= htmlspecialchars(strtolower($module)) ?>"><?= htmlspecialchars($module) ?></option>
     <?php endforeach; ?>
   </select>
 
-  <section class="table-section">
-    <table border="1" cellpadding="5" cellspacing="0">
-      <thead>
-        <tr>
-          <th>Titre</th>
-          <th>Module</th>
-          <th>Professeur</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <?php if ($cours->num_rows > 0): ?>
-          <?php while ($row = $cours->fetch_assoc()): ?>
-            <tr>
-              <td><?= htmlspecialchars($row['titre']) ?></td>
-              <td><?= htmlspecialchars($row['module']) ?></td>
-              <td><?= htmlspecialchars($row['prof_nom']) ?></td>
-              <td>
-                <?php if (!empty($row['fichier'])): ?>
-                  <a href="uploads/<?= rawurlencode($row['fichier']) ?>" target="_blank">Voir</a> |
-                  <a href="download.php?id=<?= (int)$row['id_contenu'] ?>">Télécharger</a>
-                <?php else: ?>
-                  Aucun fichier
-                <?php endif; ?>
-              </td>
-            </tr>
-          <?php endwhile; ?>
-        <?php else: ?>
+  <table>
+    <thead>
+      <tr>
+        <th>Titre</th>
+        <th>Module</th>
+        <th>Professeur</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php if ($cours->num_rows > 0): ?>
+        <?php while ($row = $cours->fetch_assoc()): ?>
           <tr>
-            <td colspan="4">Aucun cours disponible pour votre filière.</td>
+            <td><?= htmlspecialchars($row['titre']) ?></td>
+            <td><?= htmlspecialchars($row['module']) ?></td>
+            <td><?= htmlspecialchars($row['prof_nom']) ?></td>
+            <td>
+              <?php if (!empty($row['fichier'])): ?>
+                <a href="uploads/<?= rawurlencode($row['fichier']) ?>" target="_blank">Voir</a> |
+                <a href="uploads/<?= rawurlencode($row['fichier']) ?>" download>Télécharger</a>
+              <?php else: ?>
+                Aucun fichier
+              <?php endif; ?>
+            </td>
           </tr>
-        <?php endif; ?>
-      </tbody>
-    </table>
-  </section>
+        <?php endwhile; ?>
+      <?php else: ?>
+        <tr>
+          <td colspan="4">Aucun cours disponible pour votre filière.</td>
+        </tr>
+      <?php endif; ?>
+    </tbody>
+  </table>
+
+  <br />
+  <a href="etud.php">← Retour au menu</a>
 
 <script>
   function filterTable() {
