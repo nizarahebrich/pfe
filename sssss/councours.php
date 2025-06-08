@@ -46,7 +46,7 @@ $query = $conn->prepare("
     SELECT c.id_contenu, c.titre, c.module, c.fichier, p.username AS prof_nom 
     FROM contenu c 
     JOIN prof p ON c.prof = p.id 
-    WHERE c.id_f = ? AND c.type = 'concours'
+    WHERE c.id_f = ? AND c.type = 'Concours'
 ");
 $query->bind_param("i", $id_filiere);
 $query->execute();

@@ -46,7 +46,7 @@ $query = $conn->prepare("
     SELECT c.titre, c.module, p.username AS prof_nom, c.id_contenu, c.fichier
     FROM contenu c
     JOIN prof p ON c.prof = p.id
-    WHERE c.id_f = ? AND c.type = 'exam'
+    WHERE c.id_f = ? AND c.type = 'Examen'
 ");
 $query->bind_param("i", $id_filiere);
 $query->execute();

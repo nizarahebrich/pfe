@@ -74,6 +74,7 @@ $conn->close();
         #codeProfField {
             display: none;
         }
+
     </style>
 </head>
 <body>
@@ -121,8 +122,10 @@ $conn->close();
                 </div>
 
                 <div class="floating-label">
-                    <input type="text" id="nom_f" name="nom_f" placeholder=" " required>
-                    <label for="nom_f">Filière</label>
+                     <select id="nom_f" name="nom_f" required>
+                        <option value="" disabled selected>Filière</option>
+                        
+                    </select>
                 </div>
 
                 <input type="submit" class="btn" value="S'inscrire">
