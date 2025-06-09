@@ -61,11 +61,35 @@ function isActive($pageName) {
     .menu .header h1 {
         display: inline-block;
         margin-left: 0.5em;
-        color: #0d6efd;
+        color: #000000;
         font-weight: 700;
         font-size: 1.5em;
         vertical-align: middle;
     }
+    .right-img {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2em;
+  background-color: #ffffff;
+}
+
+.right-img img {
+  max-width: 100%;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+.header img{
+  max-width: 100%;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
 </style>
 
 <script>
@@ -96,9 +120,9 @@ function isActive($pageName) {
 
 <div class="menu">
     <ul>
-        <li class="<?php echo isActive('prof.php'); ?>">
+        <li class="">
             <div class="header">
-                <img src="img/logo.png" alt="Logo">
+                <img src="prof.jpg" alt="Logo">
                 <h1>Professeur</h1>
             </div>
             <a href="prof.php">Accueil</a>
@@ -115,3 +139,7 @@ function isActive($pageName) {
         </li>
     </ul>
 </div>
+  <div class="right-img">
+    <img src="prof.jpg" alt="Professeur Illustration">
+  </div>
+
