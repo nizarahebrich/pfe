@@ -91,100 +91,143 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Ajouter un Contenu</title>
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f8f9fa;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            height: 100vh;
-        }
-        .menu {
-            background-color: rgb(220, 228, 238);
-            padding: 1em;
-            width: 250px;
-            box-sizing: border-box;
-            overflow-y: auto;
-        }
-        .menu ul {
-            list-style: none;
-            padding: 0;
-        }
-        .menu ul li {
-            margin: 0.5em 0;
-        }
-        .menu ul li a {
-            display: block;
-            padding: 10px;
-            text-decoration: none;
-            color: #333;
-            font-weight: bold;
-            border-radius: 5px;
-        }
-        .menu ul li a:hover,
-        .menu ul li.active > a {
-            background-color: #0d6efd;
-            color: #fff;
-        }
-        .menu ul li .submenu {
-            display: block;
-            padding-left: 15px;
-        }
-        .menu ul li .submenu li a.active-submenu {
-            background-color: #0d6efd;
-            color: #fff;
-        }
-        .menu .header img {
-            max-width: 50px;
-            vertical-align: middle;
-        }
-        .menu .header h1 {
-            display: inline-block;
-            margin-left: 0.5em;
-            color: #0d6efd;
-        }
-        .content {
-            flex-grow: 1;
-            padding: 40px;
-            background: #fff;
-            overflow-y: auto;
-        }
-        form {
-            max-width: 500px;
-        }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-        input[type="text"],
-        select,
-        input[type="file"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 18px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        button {
-            padding: 12px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            font-weight: bold;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .message {
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
-        .error { color: #dc3545; }
-        .success { color: #28a745; }
+  <style>
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #0a192f;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      height: 100vh;
+      color: #ffffff;
+    }
+
+    .menu {
+      background-color: #102542;
+      padding: 1em;
+      width: 250px;
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+
+    .menu ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .menu ul li {
+      margin: 0.5em 0;
+    }
+
+    .menu ul li a {
+      display: block;
+      padding: 10px;
+      text-decoration: none;
+      color: #cfd8dc;
+      font-weight: bold;
+      border-radius: 5px;
+    }
+
+    .menu ul li a:hover,
+    .menu ul li.active > a {
+      background-color: #00bcd4;
+      color: #0a192f;
+    }
+
+    .menu ul li .submenu {
+      display: block;
+      padding-left: 15px;
+    }
+
+    .menu ul li .submenu li a.active-submenu {
+      background-color: #00bcd4;
+      color: #0a192f;
+    }
+
+    .menu .header img {
+      max-width: 50px;
+      vertical-align: middle;
+      border-radius: 20px;
+    }
+
+    .menu .header h1 {
+      display: inline-block;
+      margin-left: 0.5em;
+      color: #00bcd4;
+      font-weight: 700;
+      font-size: 1.5em;
+      vertical-align: middle;
+    }
+
+    .content {
+      flex-grow: 1;
+      background: #0a192f;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .center-box {
+      background: #ffffff;
+      color: #0a192f;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 188, 212, 0.15);
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+    }
+
+    .center-box h1 {
+      margin-bottom: 25px;
+      color: #007ba7;
+    }
+
+    form {
+      max-width: 500px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    input[type="text"],
+    select,
+    input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 18px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      padding: 12px;
+      background-color: #00bcd4;
+      color: #0a192f;
+      border: none;
+      font-weight: bold;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #007ba7;
+    }
+
+    .message {
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    .error { color: #f44336; }
+    .success { color: #4caf50; }
+
     </style>
 </head>
 <body>
@@ -193,7 +236,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <ul>
         <li class="<?php echo isActive('prof_home.php'); ?>">
             <div class="header">
-                <img src="img/logo.png" alt="Logo">
+                <img src="prof.jpg" alt="Logo">
                 <h1>Professeur</h1>
             </div>
             <a href="prof.php">Accueil</a>
@@ -208,6 +251,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 
 <div class="content">
+    <div class="center-box">
     <h1>Ajouter un contenu</h1>
 
     <?php if ($insertError): ?>

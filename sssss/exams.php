@@ -64,7 +64,7 @@ $cours = $query->get_result();
       width: 300px;
       font-size: 1rem;
       border: 1px solid #ccc;
-      border-radius: 4px;
+      border-radius: 10px;
     }
     table {
       width: 100%;
@@ -115,7 +115,7 @@ $cours = $query->get_result();
         <th>Titre</th>
         <th>Module</th>
         <th>Professeur</th>
-        <th>Actions</th>
+        <th>Fichiers</th>
       </tr>
     </thead>
     <tbody>

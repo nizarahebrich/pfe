@@ -43,112 +43,139 @@ function isSubActive($pageName) {
     <title>Tous les Cours</title>
     <style>
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f8f9fa;
-            margin: 0; padding: 0;
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-        .menu {
-            background-color: rgb(220, 228, 238);
-            padding: 1em;
-            width: 250px;
-            box-sizing: border-box;
-            overflow-y: auto;
-        }
-        .menu ul {
-            list-style: none;
-            padding: 0; margin: 0;
-        }
-        .menu ul li {
-            margin: 0.5em 0;
-            position: relative;
-        }
-        .menu ul li a {
-            color: #333;
-            text-decoration: none;
-            font-weight: 600;
-            display: block;
-            padding: 8px 15px;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-        .menu ul li a:hover,
-        .menu ul li.active > a {
-            background-color: #0d6efd;
-            color: white;
-        }
-        .menu ul li .submenu {
-            list-style: none;
-            padding-left: 15px;
-            margin-top: 5px;
-            display: none;
-        }
-        .menu ul li.active > .submenu {
-            display: block;
-        }
-        .menu ul li .submenu li a.active-submenu {
-            background-color: #0d6efd;
-            color: white;
-            font-weight: 700;
-        }
-        .menu .header img {
-            max-width: 50px;
-            vertical-align: middle;
-        }
-        .menu .header h1 {
-            display: inline-block;
-            margin-left: 0.5em;
-            color: #0d6efd;
-            font-weight: 700;
-            font-size: 1.5em;
-            vertical-align: middle;
-        }
-        .content {
-            flex-grow: 1;
-            padding: 30px 40px;
-            background: white;
-            overflow-y: auto;
-        }
-        h1 {
-            margin-bottom: 24px;
-            color: #333;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 15px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 10px 15px;
-            text-align: left;
-        }
-        th {
-            background-color: #0d6efd;
-            color: white;
-        }
-        tr:nth-child(even) {
-            background-color: #f2f6fc;
-        }
-        a.link-view, a.link-download {
-            font-weight: 600;
-            text-decoration: none;
-            margin-right: 8px;
-        }
-        a.link-view {
-            color: #007bff;
-        }
-        a.link-view:hover {
-            text-decoration: underline;
-        }
-        a.link-download {
-            color: #28a745;
-        }
-        a.link-download:hover {
-            text-decoration: underline;
-        }
+  font-family: 'Poppins', sans-serif;
+  background-color: #0a192f;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  color: #ffffff;
+}
+
+.menu {
+  background-color: #102542;
+  padding: 1em;
+  width: 250px;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu ul li {
+  margin: 0.5em 0;
+  position: relative;
+}
+
+.menu ul li a {
+  color: #cfd8dc;
+  text-decoration: none;
+  font-weight: 600;
+  display: block;
+  padding: 8px 15px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.menu ul li a:hover,
+.menu ul li.active > a {
+  background-color: #00bcd4;
+  color: #0a192f;
+}
+
+.menu ul li .submenu {
+  list-style: none;
+  padding-left: 15px;
+  margin-top: 5px;
+  display: none;
+}
+
+.menu ul li.active > .submenu {
+  display: block;
+}
+
+.menu ul li .submenu li a.active-submenu {
+  background-color: #00bcd4;
+  color: #0a192f;
+  font-weight: 700;
+}
+
+.menu .header img {
+  max-width: 50px;
+  vertical-align: middle;
+  border-radius: 20px;
+}
+
+.menu .header h1 {
+  display: inline-block;
+  margin-left: 0.5em;
+  color: #00bcd4;
+  font-weight: 700;
+  font-size: 1.5em;
+  vertical-align: middle;
+}
+
+.content {
+  flex-grow: 1;
+  padding: 30px 40px;
+  background: #0a192f;
+  overflow-y: auto;
+}
+
+h1 {
+  margin-bottom: 24px;
+  color: #00bcd4;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+  color: #ffffff;
+}
+
+th, td {
+  border: 1px solid #2c3e50;
+  padding: 10px 15px;
+  text-align: left;
+}
+
+th {
+  background-color: #00bcd4;
+  color: #0a192f;
+}
+
+tr:nth-child(even) {
+  background-color: #102542;
+}
+
+a.link-view,
+a.link-download {
+  font-weight: 600;
+  text-decoration: none;
+  margin-right: 8px;
+}
+
+a.link-view {
+  color: #00bcd4;
+}
+
+a.link-view:hover {
+  text-decoration: underline;
+}
+
+a.link-download {
+  color: #4caf50;
+}
+
+a.link-download:hover {
+  text-decoration: underline;
+}
     </style>
 </head>
 <body>
@@ -157,7 +184,7 @@ function isSubActive($pageName) {
     <ul>
         <li class="<?php echo isActive('prof_home.php'); ?>">
             <div class="header">
-                <img src="img/logo.png" alt="Logo">
+                <img src="prof.jpg" alt="Logo">
                 <h1>Professeur</h1>
             </div>
             <a href="prof.php">Accueil</a>

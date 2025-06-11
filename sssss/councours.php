@@ -62,6 +62,8 @@ $concours = $query->get_result();
       padding: 5px;
       width: 300px;
       font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 10px;
     }
   </style>
 </head>

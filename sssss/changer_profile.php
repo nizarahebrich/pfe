@@ -223,11 +223,12 @@ $conn->close();
         placeholder="••••••••"
         required
       />
-
+     <div class="button-column">
       <button type="submit">Enregistrer les modifications</button>
       <button type="button" onclick="window.location.href='etud.php';" style="margin-left: 10px;">
         Retour au menu
       </button>
+      </div>
     </form>
   </div>
 

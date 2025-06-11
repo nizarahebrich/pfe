@@ -80,72 +80,98 @@ $conn->close();
     <meta charset="UTF-8">
     <title>Modifier Contenu</title>
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f8f9fa;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            width: 500px;
-        }
-        h2 {
-            margin-bottom: 20px;
-            color: #0d6efd;
-            text-align: center;
-        }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-        input[type="text"],
-        select,
-        input[type="file"] {
-            width: 100%;
-            padding: 10px 12px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-        .file-label {
-            font-size: 14px;
-            color: #555;
-        }
-        button {
-            width: 100%;
-            background-color: #0d6efd;
-            color: white;
-            border: none;
-            padding: 12px;
-            font-size: 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .back {
-            margin-top: 10px;
-            text-align: center;
-        }
-        .back a {
-            color: #0d6efd;
-            text-decoration: none;
-        }
-        .back a:hover {
-            text-decoration: underline;
-        }
+      body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #0a192f;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    color: #ffffff;
+}
+
+.container {
+    background: #102542;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 188, 212, 0.2);
+    width: 500px;
+}
+
+h2 {
+    margin-bottom: 20px;
+    color: #00bcd4;
+    text-align: center;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+input[type="text"],
+select,
+input[type="file"] {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 20px;
+    border: 1px solid #33475b;
+    background-color: #1b2b41;
+    color: #ffffff;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s, background-color 0.3s;
+}
+
+input[type="text"]:focus,
+select:focus,
+input[type="file"]:focus {
+    border-color: #00bcd4;
+    background-color: #22354d;
+    outline: none;
+}
+
+.file-label {
+    font-size: 14px;
+    color: #aaa;
+}
+
+button {
+    width: 100%;
+    background-color: #00bcd4;
+    color: #0a192f;
+    border: none;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #00a2bb;
+}
+
+.back {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.back a {
+    color: #00bcd4;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.back a:hover {
+    text-decoration: underline;
+}
+
     </style>
 </head>
 <body>
